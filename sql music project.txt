@@ -1,0 +1,67 @@
+select a.name, l.Title AS album_title, count(l.title) as noof_albums
+from artist a
+join 
+Album l
+on 
+a.ArtistId = l.ArtistId
+GROUP by a.name
+
+
+#
+
+SELECT 
+    e.EmployeeId,
+    e.FirstName || ' ' || e.LastName AS EmployeeName,
+    COUNT(DISTINCT c.CustomerId) AS NumCustomers,
+    SUM(i.Total) AS TotalInvoiceAmount
+FROM 
+    Customer c
+LEFT JOIN 
+    invoice i ON i.CustomerId = c.CustomerId 
+LEFT JOIN 
+    employee e ON e.EmployeeId = c.SupportRepId
+GROUP BY 
+    e.EmployeeId, EmployeeName;
+
+
+#
+
+WITH CustomerSpending AS (
+    SELECT 
+        i.CustomerId,
+        SUM(i.Total) AS TotalSpent
+    FROM 
+        Invoice i
+    GROUP BY 
+        i.CustomerId
+)
+SELECT 
+    c.CustomerId,
+    c.FirstName || ' ' || c.LastName AS CustomerName,
+    cs.TotalSpent
+FROM 
+    Customer c
+LEFT JOIN 
+    CustomerSpending cs ON c.CustomerId = cs.CustomerId
+ORDER BY 
+    cs.TotalSpent DESC;
+
+
+#
+
+WITH artist_occurrence AS (
+    SELECT ArtistId, COUNT(*) AS Occurrences
+    FROM Album
+    GROUP BY ArtistId
+)
+SELECT 
+    a.ArtistId,
+    a.Name,
+    ao.Occurrences
+FROM 
+    Artist a
+JOIN 
+    artist_occurrence ao ON a.ArtistId = ao.ArtistId
+ORDER BY 
+    ao.Occurrences DESC;
+
